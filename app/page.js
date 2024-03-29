@@ -1,18 +1,10 @@
 "use server";
 
 import Home from "@/components/Home";
-import { supabase } from "@/utils/supabaseClient";
+import { getCachedAppData } from "@/utils/actions";
 
-export default async function InitialData() {
-  const { data: eventData } = await supabase
-    .from("Events")
-    .select("*")
-    .is("is_current_event", true);
+export default async function InitialHomeData() {
+  const data = await getCachedAppData();
 
-  const { data: itemData } = await supabase
-    .from("Items")
-    .select("*")
-    .eq("item_type", "attendee");
-
-  return <Home initItems={itemData} initEventInfo={eventData} />;
+  return <Home initItems={data.itemData} initEventInfo={data.eventData} />;
 }

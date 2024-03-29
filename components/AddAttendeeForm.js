@@ -40,7 +40,7 @@ const schema = z.object({
   email: z.string().email(),
 });
 
-const AddAttendeeForm = ({ isFormOpen, formHandler, setAttendees }) => {
+const AddAttendeeForm = ({ isFormOpen, formHandler, setAttendees, items }) => {
   const {
     register,
     handleSubmit,
@@ -51,7 +51,7 @@ const AddAttendeeForm = ({ isFormOpen, formHandler, setAttendees }) => {
     resolver: zodResolver(schema),
     mode: "onBlur",
     defaultValues: {
-      attendeeType: "Golfer",
+      attendeeType: items.find((item) => item.name === "Golfer").item_id,
     },
   });
 
@@ -65,17 +65,25 @@ const AddAttendeeForm = ({ isFormOpen, formHandler, setAttendees }) => {
   }, [isFormVisible]);
 
   const addAttendee = (data) => {
-    console.log(data);
+    const attendeeType = items.find(
+      (item) => item.item_id === data.attendeeType
+    ).name;
+    const attendeeCost = items.find(
+      (item) => item.item_id === data.attendeeType
+    ).cost;
+
+    console.log("ATTENDEE COST: ", attendeeCost);
 
     setAttendees((curAttendees) => [
       ...curAttendees,
       {
         ID: uuidv4(),
-        EventType: data.attendeeType,
+        EventType: attendeeType,
         FirstName: data.firstName,
         LastName: data.lastName,
         PhoneNumber: data.phoneNumber,
         Email: data.email,
+        Cost: attendeeCost,
       },
     ]);
   };
@@ -83,13 +91,12 @@ const AddAttendeeForm = ({ isFormOpen, formHandler, setAttendees }) => {
   const onSubmit = (data) => {
     reset();
     addAttendee(data);
-    console.log("Data", data);
     formHandler();
   };
 
   const handleAddAttendee = (data) => {
-    reset();
     addAttendee(data);
+    reset();
     setIsFormVisible(() => false);
     setNumAttendees((prevVal) => prevVal + 1);
   };
@@ -158,8 +165,11 @@ const AddAttendeeForm = ({ isFormOpen, formHandler, setAttendees }) => {
                       color="stm-red"
                       className="mb-2"
                     >
-                      <Option value="Golfer">Golfer</Option>
-                      <Option value="Dinner">Dinner Only</Option>
+                      {items.map((item) => (
+                        <Option key={`${item.item_id}`} value={item.item_id}>
+                          {item.name}
+                        </Option>
+                      ))}
                     </Select>
                   )}
                 />
@@ -209,12 +219,7 @@ const AddAttendeeForm = ({ isFormOpen, formHandler, setAttendees }) => {
           >
             Add Attendee
           </Button>
-          <Button
-            variant="outlined"
-            color="stm-red"
-            className="disabled"
-            type="submit"
-          >
+          <Button variant="outlined" color="stm-red" type="submit">
             Save
           </Button>
         </CardFooter>

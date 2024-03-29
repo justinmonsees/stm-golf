@@ -1,33 +1,39 @@
 "use server";
 
-export async function test() {
-  console.log("Server action triggered");
+import { supabase } from "@/utils/supabaseClient";
+import { unstable_cache } from "next/cache";
+
+import { redirect } from "next/navigation";
+
+async function getInitialData() {
+  const { data: eventData } = await supabase
+    .from("Events")
+    .select("*")
+    .is("is_current_event", true);
+
+  const { data: itemData } = await supabase.from("Items").select("*");
+
+  //console.log("EVENT", eventData);
+  return { eventData: eventData[0], itemData };
 }
 
-export async function checkout() {
-  const attendees = [
-    {
-      EventType: "Golfer",
-      FirstName: "Justin",
-      LastName: "Monsees",
-      PhoneNumber: "631-806-1078",
-      Email: "justinmonsees@gmail.com",
-      Cost: 185,
-    },
-    {
-      EventType: "Dinner",
-      FirstName: "Emily",
-      LastName: "Monsees",
-      PhoneNumber: "631-806-1078",
-      Email: "justinmonsees@gmail.com",
-      Cost: 70,
-    },
-  ];
+export const getCachedAppData = unstable_cache(
+  async (data) => getInitialData(),
+  ["initial-app-data"]
+);
 
+export async function checkout(attendees) {
+  const pmtLink = await getPaymentLink(attendees);
+
+  redirect(pmtLink);
+}
+
+async function getPaymentLink(attendees) {
   const squarePmtLink = process.env.SQUARE_PMT_LINK;
   const squareLocationID = process.env.SQUARE_LOCATION_ID;
   const squareAccessToken = process.env.SQUARE_DEV_ACCESS_TOKEN;
 
+  let pmtLink = "";
   const items = attendees.map((attendee) => ({
     quantity: "1",
     base_price_money: {
@@ -70,7 +76,7 @@ export async function checkout() {
     body: JSON.stringify(jsonData), // Convert JSON data to a string and set it as the request body
   };
 
-  fetch(process.env.SQUARE_DEV_LINK, options)
+  pmtLink = fetch(process.env.SQUARE_DEV_LINK, options)
     .then((response) => {
       // Check if the request was successful
       if (!response.ok) {
@@ -81,10 +87,12 @@ export async function checkout() {
     })
     .then((data) => {
       // Handle the JSON data
-      console.log(data);
+      return data.payment_link.url;
     })
     .catch((error) => {
       // Handle any errors that occurred during the fetch
       console.error("Fetch error:", error);
     });
+
+  return pmtLink;
 }

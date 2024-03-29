@@ -3,6 +3,7 @@
 import React from "react";
 import heroImg from "@/assets/hero-bg.jpg";
 import { Button } from "@material-tailwind/react";
+import { useState, useEffect } from "react";
 import InfoCard from "./InfoCard";
 import {
   faCalendarDays,
@@ -11,7 +12,10 @@ import {
   faDollarSign,
 } from "@fortawesome/free-solid-svg-icons";
 
-const HeroSection = ({ items, eventInfo }) => {
+const HeroSection = ({ initItemInfo, initEventInfo }) => {
+  const itemInfo = initItemInfo;
+  const eventInfo = initEventInfo;
+
   return (
     <div
       className="min-h-screen w-full bg-cover bg-no-repeat bg-center bg-blend-overlay bg-black/50 flex text-center flex-col"
@@ -63,7 +67,7 @@ const HeroSection = ({ items, eventInfo }) => {
 
         <InfoCard
           infoIcon={faDollarSign}
-          infoText={items
+          infoText={itemInfo
             .map((item) => `$${item.cost} Per ${item.name}`)
             .join(`\n`)}
         ></InfoCard>

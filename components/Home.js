@@ -11,13 +11,13 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 export default function Home({ initItems, initEventInfo }) {
-  const [eventInfo, setEventInfo] = useState(initEventInfo[0]);
+  const [eventInfo, setEventInfo] = useState(initEventInfo);
   const [itemInfo, setItemInfo] = useState(initItems);
 
   return (
     <React.Fragment>
       <Header />
-      <HeroSection items={itemInfo} eventInfo={eventInfo} />
+      <HeroSection initItemInfo={initItems} initEventInfo={initEventInfo} />
 
       <section className="grid gid-cols-1 sm:grid-cols-2">
         <div className="bg-white text-black m-auto grid p-4">
