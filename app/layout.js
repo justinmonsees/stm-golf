@@ -1,6 +1,6 @@
 "use client";
 
-import { Lobster, Raleway, Noto_Serif } from "next/font/google";
+import { Lobster, Raleway, Noto_Serif, Roboto } from "next/font/google";
 import { ThemeProvider } from "@material-tailwind/react";
 
 import "./globals.css";
@@ -23,6 +23,13 @@ const notoSerif = Noto_Serif({
   subsets: ["latin"],
   display: "swap",
   variable: "--notoSerif",
+});
+
+const roboto = Roboto({
+  weight: ["300", "400", "500", "700"],
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--roboto",
 });
 
 export default function RootLayout({ children }) {
@@ -149,7 +156,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <ThemeProvider value={customTheme}>
         <body
-          className={`${raleway.variable} ${lobster.variable} ${notoSerif.variable} font-sans`}
+          className={` ${roboto.variable} ${raleway.variable} ${lobster.variable} ${notoSerif.variable} font-sans`}
         >
           {children}
         </body>

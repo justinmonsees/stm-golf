@@ -10,7 +10,7 @@ module.exports = withMT({
   ],
   theme: {
     fontFamily: {
-      sans: ["var(--raleway)", "Arial", "sans-serif"],
+      sans: ["var(--roboto)", "Arial", "sans-serif"],
       lobster: ["var(--lobster)", "Arial"],
       noto: ["var(--notoSerif)", "serif"],
     },
