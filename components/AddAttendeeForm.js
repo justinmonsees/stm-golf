@@ -124,93 +124,92 @@ const AddAttendeeForm = ({ isFormOpen, formHandler, setAttendees, items }) => {
   };
 
   return (
-    <Dialog
-      open={isFormOpen}
-      handler={formHandler}
-      size="sm"
-      className="overflow-hidden"
-    >
+    <Dialog open={isFormOpen} handler={formHandler} size="sm">
       <form onSubmit={handleSubmit(onSubmit)}>
         <DialogHeader className="p-6">
-          <Typography variant="h2">Add Attendee #{numAttendees}</Typography>
+          <Typography variant="h2" className="text-2xl sm:text-4xl">
+            Add Attendee #{numAttendees}
+          </Typography>
           <FontAwesomeIcon
-            className="h-10 w-10 ml-auto text-stm-red"
+            className=" h-10 w-10 ml-auto text-stm-red"
             icon={faXmark}
             onClick={handleCloseForm}
           />
         </DialogHeader>
-        <AnimatePresence initial={false}>
-          {isFormVisible && (
-            <motion.div
-              key={numAttendees}
-              variants={variants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{
-                x: {
-                  duration: 0.5,
-                },
-                opacity: { duration: 0.5 },
-              }}
-            >
-              <Card className="h-full gap-4 p-4 ">
-                <Controller
-                  control={control}
-                  name={"attendeeType"}
-                  render={({ field }) => (
-                    <Select
-                      {...field}
-                      label="Attendee Type"
-                      color="stm-red"
-                      className="mb-2"
-                    >
-                      {items.map((item) => (
-                        <Option key={`${item.item_id}`} value={item.item_id}>
-                          {item.name}
-                        </Option>
-                      ))}
-                    </Select>
-                  )}
-                />
-                <div className="text-xs text-red-500"></div>
+        <DialogBody className="overflow-scroll">
+          <AnimatePresence initial={false}>
+            {isFormVisible && (
+              <motion.div
+                key={numAttendees}
+                variants={variants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{
+                  x: {
+                    duration: 0.5,
+                  },
+                  opacity: { duration: 0.5 },
+                }}
+              >
+                <div className="h-full gap-2 p-4 flex flex-col">
+                  <Controller
+                    control={control}
+                    name={"attendeeType"}
+                    render={({ field }) => (
+                      <Select
+                        {...field}
+                        label="Attendee Type"
+                        color="stm-red"
+                        className="mb-3"
+                      >
+                        {items.map((item) => (
+                          <Option key={`${item.item_id}`} value={item.item_id}>
+                            {item.name}
+                          </Option>
+                        ))}
+                      </Select>
+                    )}
+                  />
+                  <div className="text-xs text-red-500"></div>
 
-                <Input
-                  label={`First Name`}
-                  color="stm-red"
-                  {...register(`firstName`)}
-                />
-                <div className="text-xs text-red-500">
-                  {errors.firstName && errors.firstName.message}
+                  <Input
+                    label={`First Name`}
+                    color="stm-red"
+                    {...register(`firstName`)}
+                  />
+                  <div className="text-xs text-red-500">
+                    {errors.firstName && errors.firstName.message}
+                  </div>
+                  <Input
+                    label={`Last Name`}
+                    color="stm-red"
+                    {...register(`lastName`)}
+                  />
+                  <div className="text-xs text-red-500">
+                    {errors.lastName && errors.lastName.message}
+                  </div>
+                  <Input
+                    label={`Phone Number`}
+                    color="stm-red"
+                    {...register(`phoneNumber`)}
+                  />
+                  <div className="text-xs text-red-500">
+                    {errors.phoneNumber && errors.phoneNumber.message}
+                  </div>
+                  <Input
+                    label={`Email Address`}
+                    color="stm-red"
+                    {...register(`email`)}
+                  />
+                  <div className="text-xs text-red-500">
+                    {errors.email && errors.email.message}
+                  </div>
                 </div>
-                <Input
-                  label={`Last Name`}
-                  color="stm-red"
-                  {...register(`lastName`)}
-                />
-                <div className="text-xs text-red-500">
-                  {errors.lastName && errors.lastName.message}
-                </div>
-                <Input
-                  label={`Phone Number`}
-                  color="stm-red"
-                  {...register(`phoneNumber`)}
-                />
-                <div className="text-xs text-red-500">
-                  {errors.phoneNumber && errors.phoneNumber.message}
-                </div>
-                <Input
-                  label={`Email Address`}
-                  color="stm-red"
-                  {...register(`email`)}
-                />
-                <div className="text-xs text-red-500">
-                  {errors.email && errors.email.message}
-                </div>
-              </Card>
-            </motion.div>
-          )}
-        </AnimatePresence>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </DialogBody>
         <CardFooter className="flex justify-between">
           <Button
             variant="outlined"
