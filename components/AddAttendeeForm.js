@@ -178,7 +178,7 @@ const AddAttendeeForm = ({ isFormOpen, formHandler, setAttendees, items }) => {
                 <Input
                   label={`First Name`}
                   color="stm-red"
-                  {...register(`firstName`, { required: true })}
+                  {...register(`firstName`)}
                 />
                 <div className="text-xs text-red-500">
                   {errors.firstName && errors.firstName.message}

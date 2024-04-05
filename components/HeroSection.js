@@ -5,6 +5,7 @@ import heroImg from "@/assets/hero-bg.jpg";
 import { Button } from "@material-tailwind/react";
 import { useState, useEffect } from "react";
 import InfoCard from "./InfoCard";
+import Link from "next/link";
 import {
   faCalendarDays,
   faClock,
@@ -18,12 +19,12 @@ const HeroSection = ({ initItemInfo, initEventInfo }) => {
 
   return (
     <div
-      className="min-h-screen w-full bg-cover bg-no-repeat bg-center bg-blend-overlay bg-black/50 flex text-center flex-col"
+      className=" sm:min-h-screen w-full bg-cover bg-no-repeat bg-center bg-blend-overlay bg-black/50 flex text-center flex-col"
       style={{
         backgroundImage: `url(${heroImg.src})`,
       }}
     >
-      <div className="mt-auto">
+      <div className="mt-[90px] sm:mt-auto mb-[90px] sm:mb-0">
         <div className="text-white relative mt-7">
           <p className="font-lobster text-2xl sm:text-3xl">18th Annual</p>
           <p className="font-noto sm:text-4xl font-light sm:leading-10 text-xl leading-tight">
@@ -38,14 +39,14 @@ const HeroSection = ({ initItemInfo, initEventInfo }) => {
             color="white"
             className="text-white border-white"
           >
-            Register Now
+            <Link href={"register"}>Register Now</Link>
           </Button>
           <Button
             variant="outlined"
             color="white"
             className="text-white border-white"
           >
-            Become a Sponsor
+            <Link href={"donate"}>Become a Sponsor</Link>
           </Button>
         </div>
       </div>

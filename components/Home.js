@@ -47,11 +47,13 @@ export default function Home({ initItems, initEventInfo }) {
           </Button>
         </div>
 
-        <img
-          className="hidden sm:block h-full object-cover"
+        <Image
+          className="hidden sm:block h-full w-full object-cover"
           src={golferImg.src}
+          width={300}
+          height={300}
           alt="golfer in sandtrap"
-        ></img>
+        ></Image>
       </section>
 
       <section

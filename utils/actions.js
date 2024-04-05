@@ -4,6 +4,7 @@ import { supabase } from "@/utils/supabaseClient";
 import { unstable_cache } from "next/cache";
 
 import { redirect } from "next/navigation";
+import { get } from "react-hook-form";
 
 async function getInitialData() {
   const { data: eventData } = await supabase
@@ -22,18 +23,36 @@ export const getCachedAppData = unstable_cache(
   ["initial-app-data"]
 );
 
-export async function checkout(attendees) {
-  const pmtLink = await getPaymentLink(attendees);
+export async function checkoutSponsors(donationInfo) {
+  const appData = await getCachedAppData();
+
+  const sponsorItems = appData.itemData.filter(
+    (item) => item.item_type === "sponsor"
+  );
+
+  const items = donationInfo.donations
+    .filter((donation) => donation.quantity > 0)
+    .map((donation) => ({
+      quantity: `${donation.quantity}`,
+      base_price_money: {
+        amount:
+          sponsorItems.find(
+            (item) => item.item_id === donation.sponsorshipItemID
+          ).cost * 100,
+        currency: "USD",
+      },
+      item_type: "ITEM",
+      name: sponsorItems.find(
+        (item) => item.item_id === donation.sponsorshipItemID
+      ).name,
+    }));
+
+  const pmtLink = await getPaymentLink(items);
 
   redirect(pmtLink);
 }
 
-async function getPaymentLink(attendees) {
-  const squarePmtLink = process.env.SQUARE_PMT_LINK;
-  const squareLocationID = process.env.SQUARE_LOCATION_ID;
-  const squareAccessToken = process.env.SQUARE_DEV_ACCESS_TOKEN;
-
-  let pmtLink = "";
+export async function checkoutAttendees(attendees) {
   const items = attendees.map((attendee) => ({
     quantity: "1",
     base_price_money: {
@@ -43,6 +62,17 @@ async function getPaymentLink(attendees) {
     item_type: "ITEM",
     name: `${attendee.FirstName} ${attendee.LastName} - ${attendee.EventType}`,
   }));
+  const pmtLink = await getPaymentLink(items);
+
+  redirect(pmtLink);
+}
+
+async function getPaymentLink(items) {
+  const squarePmtLink = process.env.SQUARE_PMT_LINK;
+  const squareLocationID = process.env.SQUARE_LOCATION_ID;
+  const squareAccessToken = process.env.SQUARE_DEV_ACCESS_TOKEN;
+
+  let pmtLink = "";
 
   //***** ADD REDIRECT URL FOR PRODUCTION *******/
   const jsonData = {

@@ -6,5 +6,9 @@ import { getCachedAppData } from "@/utils/actions";
 export default async function InitialHomeData() {
   const data = await getCachedAppData();
 
-  return <Home initItems={data.itemData} initEventInfo={data.eventData} />;
+  const attendeeItems = data.itemData.filter(
+    (item) => item.item_type === "attendee"
+  );
+
+  return <Home initItems={attendeeItems} initEventInfo={data.eventData} />;
 }

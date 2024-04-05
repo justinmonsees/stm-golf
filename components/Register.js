@@ -13,6 +13,9 @@ import {
   DialogHeader,
   DialogBody,
   DialogFooter,
+  Accordion,
+  AccordionHeader,
+  AccordionBody,
 } from "@material-tailwind/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark, faPencil } from "@fortawesome/free-solid-svg-icons";
@@ -20,7 +23,8 @@ import { faXmark, faPencil } from "@fortawesome/free-solid-svg-icons";
 import AddAttendeeForm from "@/components/AddAttendeeForm";
 import EditAttendeeForm from "@/components/EditAttendeeForm";
 
-import { test, checkout } from "@/utils/actions";
+import { checkoutAttendees } from "@/utils/actions";
+import { IBM_Plex_Sans_Condensed } from "next/font/google";
 
 const Register = ({ items }) => {
   const [isAddFormOpen, setAddFormOpen] = useState(false);
@@ -32,6 +36,10 @@ const Register = ({ items }) => {
 
   const [isDialogOpen, setDialogOpen] = useState(false);
   const handleDialogOpen = () => setDialogOpen((prevVal) => !prevVal);
+
+  const [accordionOpen, setAccordionOpen] = React.useState(1);
+  const handleAccordionOpen = (value) =>
+    setAccordionOpen(accordionOpen === value ? 0 : value);
 
   const TABLE_HEAD = [
     "Type",
@@ -62,18 +70,23 @@ const Register = ({ items }) => {
 
       <PageHeader pageTitle={"Register"} />
 
-      <section className="px-20 py-10 flex flex-col">
-        <Button
-          variant="outlined"
-          color="stm-red"
-          size="md"
-          onClick={handleAddFormOpen}
-          className="ml-auto mb-4"
-        >
-          Add Attendee
-        </Button>
-
-        <Card className="overflow-hidden">
+      <section className="px-5 sm:px-20 py-10 flex flex-col">
+        <div className="flex">
+          <Typography variant="h2" className="text-stm-red">
+            Attendees
+          </Typography>
+          <Button
+            variant="outlined"
+            color="stm-red"
+            size="md"
+            onClick={handleAddFormOpen}
+            className="ml-auto mb-4"
+          >
+            Add Attendee
+          </Button>
+        </div>
+        {/*This is for the normal attendees table */}
+        <Card className="overflow-hidden hidden sm:flex">
           <table>
             <thead>
               <tr>
@@ -152,6 +165,62 @@ const Register = ({ items }) => {
           />
         </Card>
 
+        {/*This is for the mobile responsive attendees list*/}
+        <div className="sm:hidden">
+          {attendees.length === 0 ? (
+            <Card className="p-3">
+              <Typography variant="paragraph">
+                No attendees have been added to the list
+              </Typography>
+            </Card>
+          ) : (
+            <></>
+          )}
+
+          <Card>
+            {attendees.map(
+              (
+                { ID, EventType, FirstName, LastName, PhoneNumber, Email },
+                index
+              ) => (
+                <Accordion key={ID} open={accordionOpen === index + 1}>
+                  <AccordionHeader
+                    onClick={() => handleAccordionOpen(index + 1)}
+                    className="text-center p-2 w-full text-black"
+                  >
+                    <span>
+                      {FirstName} {LastName}
+                    </span>
+                    <IconButton
+                      variant="outlined"
+                      color="stm-red"
+                      onClick={() => removeAttendee(ID)}
+                      className="ml-auto"
+                    >
+                      <FontAwesomeIcon icon={faXmark} />
+                    </IconButton>
+                  </AccordionHeader>
+                  <AccordionBody className="p-4 flex flex-col">
+                    <div className="text-black text-lg">
+                      {EventType} <br />
+                      {PhoneNumber} <br />
+                      {Email} <br />
+                    </div>
+                    <Button
+                      variant="outlined"
+                      color="stm-red"
+                      onClick={() => editAttendee(ID)}
+                      className="my-3 items-center"
+                    >
+                      Edit
+                    </Button>
+                  </AccordionBody>
+                </Accordion>
+              )
+            )}
+          </Card>
+        </div>
+
         {/*This is for the Dialog Box Segment*/}
         <Dialog open={isDialogOpen} handler={handleDialogOpen}>
           <DialogBody className="text-black text-center text-2xl font-normal m-3">
@@ -168,7 +237,7 @@ const Register = ({ items }) => {
             <Button
               variant="outlined"
               color="green"
-              onClick={() => checkout(attendees)}
+              onClick={() => checkoutAttendees(attendees)}
             >
               Confirm
             </Button>
@@ -181,6 +250,7 @@ const Register = ({ items }) => {
           size="lg"
           className="m-auto my-4"
           onClick={handleDialogOpen}
+          disabled={attendees.length === 0}
         >
           Register
         </Button>

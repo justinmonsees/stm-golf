@@ -62,7 +62,9 @@ const Header = () => {
           navColor ? "bg-white" : "bg-transparent"
         }  top-0 fixed border-none z-[100] flex rounded-none p-5`}
       >
-        <SiteLogo fill={`${navColor ? "dark" : "light"}`} />
+        <Link href="\">
+          <SiteLogo fill={`${navColor ? "dark" : "light"}`} />
+        </Link>
 
         <nav className="hidden sm:flex sm:ml-auto">
           <Tabs value={currentTab}>
@@ -146,16 +148,18 @@ const Header = () => {
                 ripple={false}
                 className="justify-center text-xl font-bold"
               >
-                {link.title}
+                <Link href={link.location}>{link.title}</Link>
               </ListItem>
             ))}
           </List>
         </div>
         <div className="flex flex-col gap-2">
           <Button size="lg" variant="outlined">
-            Register Now
+            <Link href="/register">Register Now</Link>
           </Button>
-          <Button size="lg">Make a Donation</Button>
+          <Button size="lg">
+            <Link href="/donate">Make a Donation</Link>
+          </Button>
         </div>
       </Drawer>
     </React.Fragment>
