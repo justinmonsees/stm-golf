@@ -21,10 +21,10 @@ const HeroSection = ({ initItemInfo, initEventInfo }) => {
   return (
     <section className="h-full relative">
       <Image
-        src={heroImg}
+        src={"/hero-bg.png"}
         alt="image of golf course"
         id="hero-img"
-        sizes="100vw"
+        fill={true}
         style={{
           objectFit: "cover",
           width: "100%",
