@@ -25,6 +25,7 @@ const HeroSection = ({ initItemInfo, initEventInfo }) => {
         alt="image of golf course"
         id="hero-img"
         sizes="100vw"
+        priority={true}
         width={600}
         height={400}
         className="z-[-1] object-cover h-full w-full absolute"
