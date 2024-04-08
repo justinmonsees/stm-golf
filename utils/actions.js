@@ -1,6 +1,6 @@
 "use server";
 
-import { supabase } from "@/utils/supabaseClient";
+import { supabase, supabaseAdmin } from "@/utils/supabaseClient";
 import { unstable_cache } from "next/cache";
 
 import { redirect } from "next/navigation";
@@ -24,32 +24,29 @@ export const getCachedAppData = unstable_cache(
 );
 
 export async function checkoutSponsors(donationInfo) {
-  const appData = await getCachedAppData();
-
-  const sponsorItems = appData.itemData.filter(
-    (item) => item.item_type === "sponsor"
-  );
-
-  const items = donationInfo.donations
-    .filter((donation) => donation.quantity > 0)
-    .map((donation) => ({
-      quantity: `${donation.quantity}`,
-      base_price_money: {
-        amount:
-          sponsorItems.find(
-            (item) => item.item_id === donation.sponsorshipItemID
-          ).cost * 100,
-        currency: "USD",
-      },
-      item_type: "ITEM",
-      name: sponsorItems.find(
-        (item) => item.item_id === donation.sponsorshipItemID
-      ).name,
-    }));
-
-  const pmtLink = await getPaymentLink(items);
-
-  redirect(pmtLink);
+  // const appData = await getCachedAppData();
+  // const sponsorItems = appData.itemData.filter(
+  //   (item) => item.item_type === "sponsor"
+  // );
+  // const items = donationInfo.donations
+  //   .filter((donation) => donation.quantity > 0)
+  //   .map((donation) => ({
+  //     quantity: `${donation.quantity}`,
+  //     base_price_money: {
+  //       amount:
+  //         sponsorItems.find(
+  //           (item) => item.item_id === donation.sponsorshipItemID
+  //         ).cost * 100,
+  //       currency: "USD",
+  //     },
+  //     item_type: "ITEM",
+  //     name: sponsorItems.find(
+  //       (item) => item.item_id === donation.sponsorshipItemID
+  //     ).name,
+  //   }));
+  // const pmtLink = await getPaymentLink(items);
+  // redirect(pmtLink);
+  addSponsor();
 }
 
 export async function checkoutAttendees(attendees) {
@@ -125,4 +122,23 @@ async function getPaymentLink(items) {
     });
 
   return pmtLink;
+}
+
+async function addSponsor() {
+  const { error } = await supabaseAdmin.from("Sponsors").insert([
+    {
+      name: "Joes Plumbing",
+      contact_prefix: "Mr.",
+      contact_first_name: "John",
+      contact_last_name: "Smith",
+      contact_phone_number: "631-888-9900",
+      contact_email: "john@joesplumbing.com",
+      address1: "123 Main St.",
+      city: "Smithtown",
+      state: "NY",
+      zip: "11787",
+    },
+  ]);
+  console.log("submitted request to add sponsor");
+  console.log(error);
 }

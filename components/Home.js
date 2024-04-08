@@ -50,8 +50,9 @@ export default function Home({ initItems, initEventInfo }) {
         <Image
           className="hidden sm:block h-full w-full object-cover"
           src={golferImg.src}
-          width={300}
-          height={300}
+          width={1000}
+          height={1000}
+          sizes="50vw"
           alt="golfer in sandtrap"
         ></Image>
       </section>
