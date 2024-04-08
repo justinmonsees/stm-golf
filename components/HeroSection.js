@@ -25,6 +25,8 @@ const HeroSection = ({ initItemInfo, initEventInfo }) => {
         alt="image of golf course"
         id="hero-img"
         sizes="100vw"
+        width={600}
+        height={400}
         className="z-[-1] object-cover h-full w-full absolute"
       />
       <div className="sm:min-h-screen w-full bg-blend-overlay bg-black/50 flex text-center flex-col">
