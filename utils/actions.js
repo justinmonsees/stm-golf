@@ -47,6 +47,8 @@ export async function checkoutSponsors(donationInfo) {
   // const pmtLink = await getPaymentLink(items);
   // redirect(pmtLink);
   addSponsor();
+
+  console.log("sponsor added");
 }
 
 export async function checkoutAttendees(attendees) {
@@ -124,21 +126,21 @@ async function getPaymentLink(items) {
   return pmtLink;
 }
 
-async function addSponsor() {
-  const { error } = await supabaseAdmin.from("Sponsors").insert([
-    {
-      name: "Joes Plumbing",
-      contact_prefix: "Mr.",
-      contact_first_name: "John",
-      contact_last_name: "Smith",
-      contact_phone_number: "631-888-9900",
-      contact_email: "john@joesplumbing.com",
-      address1: "123 Main St.",
-      city: "Smithtown",
-      state: "NY",
-      zip: "11787",
-    },
-  ]);
-  console.log("submitted request to add sponsor");
-  console.log(error);
-}
+// async function addSponsor() {
+//   const { error } = await supabaseAdmin.from("Sponsors").insert([
+//     {
+//       name: "Joes Plumbing",
+//       contact_prefix: "Mr.",
+//       contact_first_name: "John",
+//       contact_last_name: "Smith",
+//       contact_phone_number: "631-888-9900",
+//       contact_email: "john@joesplumbing.com",
+//       address1: "123 Main St.",
+//       city: "Smithtown",
+//       state: "NY",
+//       zip: "11787",
+//     },
+//   ]);
+//   console.log("submitted request to add sponsor");
+//   console.log(error);
+// }
