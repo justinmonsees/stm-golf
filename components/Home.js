@@ -19,7 +19,7 @@ export default function Home({ initItems, initEventInfo }) {
       <Header />
       <HeroSection initItemInfo={initItems} initEventInfo={initEventInfo} />
 
-      <section className="grid gid-cols-1 sm:grid-cols-2">
+      {/* <section className="grid gid-cols-1 sm:grid-cols-2">
         <div className="bg-white text-black m-auto grid p-4">
           <h2 className="uppercase text-5xl font-bold pb-5">Event Details</h2>
 
@@ -97,7 +97,7 @@ export default function Home({ initItems, initEventInfo }) {
           looking for new members to help with fundraising, planning, and
           facilitating on the day of the outing.
         </p>
-      </section>
+      </section> */}
 
       <Footer />
     </React.Fragment>
