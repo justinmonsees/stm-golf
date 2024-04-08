@@ -25,6 +25,7 @@ const HeroSection = ({ initItemInfo, initEventInfo }) => {
         alt="image of golf course"
         id="hero-img"
         fill={true}
+        sizes="100vw"
         style={{
           objectFit: "cover",
           width: "100%",
