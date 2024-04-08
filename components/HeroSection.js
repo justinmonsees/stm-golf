@@ -25,10 +25,13 @@ const HeroSection = ({ initItemInfo, initEventInfo }) => {
         alt="image of golf course"
         id="hero-img"
         sizes="100vw"
-        priority={true}
-        width={600}
-        height={400}
-        className="z-[-1] object-cover h-full w-full absolute"
+        style={{
+          objectFit: "cover",
+          width: "100%",
+          height: "100%",
+          position: "absolute",
+          zIndex: "-1",
+        }}
       />
       <div className="sm:min-h-screen w-full bg-blend-overlay bg-black/50 flex text-center flex-col">
         <div className="mt-[90px] sm:mt-auto mb-[90px] sm:mb-0">
