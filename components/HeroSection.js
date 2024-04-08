@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import heroImg from "@/assets/hero-bg.jpg";
+import heroImg from "@/assets/hero-bg.png";
 import { Button } from "@material-tailwind/react";
 import { useState, useEffect } from "react";
 import InfoCard from "./InfoCard";
