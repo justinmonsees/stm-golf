@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import heroImg from "@/assets/hero-bg.png";
+import heroImg from "@/public/hero-bg.png";
+import heroImg2 from "@/assets/golfer_sandtrap.png";
 import { Button } from "@material-tailwind/react";
 import { useState, useEffect } from "react";
 import InfoCard from "./InfoCard";
@@ -21,11 +22,11 @@ const HeroSection = ({ initItemInfo, initEventInfo }) => {
   return (
     <section className="h-full relative">
       <Image
-        src={"/hero-bg.png"}
+        src={heroImg}
         alt="image of golf course"
         id="hero-img"
         fill={true}
-        quality={50}
+        quality={40}
         sizes="100vw"
         style={{
           objectFit: "cover",
