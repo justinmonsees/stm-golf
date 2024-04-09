@@ -25,6 +25,7 @@ const HeroSection = ({ initItemInfo, initEventInfo }) => {
         alt="image of golf course"
         id="hero-img"
         fill={true}
+        quality={50}
         sizes="100vw"
         style={{
           objectFit: "cover",
@@ -34,6 +35,7 @@ const HeroSection = ({ initItemInfo, initEventInfo }) => {
           zIndex: "-1",
         }}
       />
+
       <div className="sm:min-h-screen w-full bg-blend-overlay bg-black/50 flex text-center flex-col">
         <div className="mt-[90px] sm:mt-auto mb-[90px] sm:mb-0">
           <div className="text-white relative mt-7">
