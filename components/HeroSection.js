@@ -2,7 +2,6 @@
 
 import React from "react";
 import heroImg from "@/public/hero-bg.png";
-import heroImg2 from "@/assets/golfer_sandtrap.png";
 import { Button } from "@material-tailwind/react";
 import { useState, useEffect } from "react";
 import InfoCard from "./InfoCard";
@@ -25,8 +24,10 @@ const HeroSection = ({ initItemInfo, initEventInfo }) => {
         src={heroImg}
         alt="image of golf course"
         id="hero-img"
-        fill={true}
-        quality={40}
+        width={600}
+        height={400}
+        quality={70}
+        priority={true}
         sizes="100vw"
         style={{
           objectFit: "cover",
