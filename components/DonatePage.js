@@ -109,12 +109,12 @@ const DonatePage = ({ items }) => {
 
   const addSponsor = (data) => {
     console.log("add sponsor");
-    const donationInfo = {
-      sponsor: data,
-      donations: sponsorships,
-    };
+    //   const donationInfo = {
+    //     sponsor: data,
+    //     donations: sponsorships,
+    //   };
 
-    checkoutSponsors(donationInfo);
+    //   checkoutSponsors(donationInfo);
   };
 
   return (
@@ -375,60 +375,64 @@ const DonatePage = ({ items }) => {
             </DialogHeader>
             <DialogBody className="text-black text-center text-2xl font-normal m-3 flex flex-col items-center">
               <table className="text-left text-2xl border-separate border-spacing-4">
-                {sponsorships.map((sponsorship) => {
-                  return sponsorship.quantity > 0 ? (
-                    <tr>
-                      <td>
-                        {
-                          items.find(
-                            (item) =>
-                              item.item_id === sponsorship.sponsorshipItemID
-                          ).name
-                        }
-                      </td>
-                      <td>x{sponsorship.quantity}</td>
-                      <td>
-                        $
-                        {
-                          items.find(
-                            (item) =>
-                              item.item_id === sponsorship.sponsorshipItemID
-                          ).cost
-                        }
-                      </td>
-                      <td>
-                        $
-                        {sponsorship.quantity *
-                          items.find(
-                            (item) =>
-                              item.item_id === sponsorship.sponsorshipItemID
-                          ).cost}
-                      </td>
-                    </tr>
-                  ) : (
-                    ""
-                  );
-                })}
-                <tr>
-                  <td colSpan="3" className="text-right">
-                    Total
-                  </td>
-                  <td>
-                    $
-                    {sponsorships.reduce(
-                      (acc, sponsorship) =>
-                        acc +
-                        sponsorship.quantity *
-                          items.find(
-                            (item) =>
-                              item.item_id === sponsorship.sponsorshipItemID
-                          ).cost,
-                      0
-                    )}
-                  </td>
-                </tr>
-                <td colSpan="3"></td>
-                <td className="text-md">**Plus credit card fee</td>
+                <tbody>
+                  {sponsorships.map((sponsorship, sponsorIndex) => {
+                    return sponsorship.quantity > 0 ? (
+                      <tr key={sponsorIndex}>
+                        <td>
+                          {
+                            items.find(
+                              (item) =>
+                                item.item_id === sponsorship.sponsorshipItemID
+                            ).name
+                          }
+                        </td>
+                        <td>x{sponsorship.quantity}</td>
+                        <td>
+                          $
+                          {
+                            items.find(
+                              (item) =>
+                                item.item_id === sponsorship.sponsorshipItemID
+                            ).cost
+                          }
+                        </td>
+                        <td>
+                          $
+                          {sponsorship.quantity *
+                            items.find(
+                              (item) =>
+                                item.item_id === sponsorship.sponsorshipItemID
+                            ).cost}
+                        </td>
+                      </tr>
+                    ) : (
+                      ""
+                    );
+                  })}
+                  <tr>
+                    <td colSpan="3" className="text-right">
+                      Total
+                    </td>
+                    <td>
+                      $
+                      {sponsorships.reduce(
+                        (acc, sponsorship) =>
+                          acc +
+                          sponsorship.quantity *
+                            items.find(
+                              (item) =>
+                                item.item_id === sponsorship.sponsorshipItemID
+                            ).cost,
+                        0
+                      )}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colSpan="3"></td>
+                    <td className="text-md">**Plus credit card fee</td>
+                  </tr>
+                </tbody>
               </table>
               <Typography variant="paragraph" className="text-left text-2xl">
                 You will now be redirected to our payment provider to complete

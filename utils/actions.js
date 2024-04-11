@@ -223,8 +223,8 @@ export async function updateOrderPmtStatus(orderID) {
     .eq(cc_order_id, orderID);
 }
 
-export async function getSponsors() {
-  const { data: sponsors } = await supabaseAdmin.from("Sponsors").select("*");
+// export async function getSponsors() {
+//   const { data: sponsors } = await supabaseAdmin.from("Sponsors").select("*");
 
-  return sponsors;
-}
+//   return sponsors;
+// }
