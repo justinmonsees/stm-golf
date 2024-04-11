@@ -10,7 +10,7 @@ export async function POST(req) {
 
   if (isFromSquare(signature, rawBody)) {
     //process incoming webhook request
-    updateOrderPmtStatus(body.data.order_id);
+    //updateOrderPmtStatus(body.data.order_id);
     return NextResponse.json({}, { status: 200 });
   } else {
     return NextResponse.json({}, { status: 405 });
