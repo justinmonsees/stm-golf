@@ -2,9 +2,7 @@
 
 import { supabase, supabaseAdmin } from "@/utils/supabaseClient";
 import { unstable_cache } from "next/cache";
-
 import { redirect } from "next/navigation";
-import { get } from "react-hook-form";
 
 async function getInitialData() {
   const { data: eventData } = await supabase
@@ -23,32 +21,72 @@ export const getCachedAppData = unstable_cache(
   ["initial-app-data"]
 );
 
-export async function checkoutSponsors(donationInfo) {
-  // const appData = await getCachedAppData();
-  // const sponsorItems = appData.itemData.filter(
-  //   (item) => item.item_type === "sponsor"
-  // );
-  // const items = donationInfo.donations
-  //   .filter((donation) => donation.quantity > 0)
-  //   .map((donation) => ({
-  //     quantity: `${donation.quantity}`,
-  //     base_price_money: {
-  //       amount:
-  //         sponsorItems.find(
-  //           (item) => item.item_id === donation.sponsorshipItemID
-  //         ).cost * 100,
-  //       currency: "USD",
-  //     },
-  //     item_type: "ITEM",
-  //     name: sponsorItems.find(
-  //       (item) => item.item_id === donation.sponsorshipItemID
-  //     ).name,
-  //   }));
-  // const pmtLink = await getPaymentLink(items);
-  // redirect(pmtLink);
-  addSponsor();
+async function getSponsor(sponsorName) {
+  const { data: sponsors } = await supabaseAdmin.from("Sponsors").select("*");
 
-  console.log("sponsor added");
+  const sponsor = sponsors.find(
+    (sponsor) =>
+      sponsor.company_name.toLowerCase() === sponsorName.toLowerCase()
+  );
+
+  return sponsor;
+}
+
+export async function checkoutSponsors(donationInfo) {
+  const appData = await getCachedAppData();
+
+  const sponsorItems = appData.itemData.filter(
+    (item) => item.item_type === "sponsor"
+  );
+  const items = donationInfo.donations
+    .filter((donation) => donation.quantity > 0)
+    .map((donation) => ({
+      quantity: `${donation.quantity}`,
+      base_price_money: {
+        amount:
+          sponsorItems.find(
+            (item) => item.item_id === donation.sponsorshipItemID
+          ).cost * 100,
+        currency: "USD",
+      },
+      item_type: "ITEM",
+      name: sponsorItems.find(
+        (item) => item.item_id === donation.sponsorshipItemID
+      ).name,
+    }));
+
+  const { paymentLink, orderID } = await getPaymentLink(items);
+
+  const sponsor = await getSponsor(donationInfo.sponsor.companyName);
+  let sponsorID = "";
+
+  if (!sponsor) {
+    //create sponsor in database
+    sponsorID = await addSponsor(donationInfo.sponsor);
+  } else {
+    sponsorID = sponsor.sponsor_id;
+  }
+
+  //add donations to database with sponsorID
+  let donationArray = [];
+
+  for (let donation of donationInfo.donations) {
+    if (donation.quantity > 0) {
+      for (let i = 0; i < donation.quantity; i++) {
+        donationArray.push({
+          item_id: donation.sponsorshipItemID,
+          description: "website donation",
+          event_id: appData.eventData.event_id,
+          sponsor_id: sponsorID,
+          paid: false,
+          cc_order_id: orderID,
+        });
+      }
+    }
+  }
+  addDonations(donationArray);
+
+  redirect(paymentLink);
 }
 
 export async function checkoutAttendees(attendees) {
@@ -66,16 +104,16 @@ export async function checkoutAttendees(attendees) {
   redirect(pmtLink);
 }
 
-async function getPaymentLink(items) {
+async function getPaymentLink(items, ccOrderID) {
   const squarePmtLink = process.env.SQUARE_PMT_LINK;
   const squareLocationID = process.env.SQUARE_LOCATION_ID;
   const squareAccessToken = process.env.SQUARE_DEV_ACCESS_TOKEN;
 
-  let pmtLink = "";
-
+  let squareData = "";
   //***** ADD REDIRECT URL FOR PRODUCTION *******/
   const jsonData = {
     order: {
+      description: "sponsor",
       line_items: items,
       location_id: squareLocationID,
       serviceCharges: [
@@ -105,7 +143,7 @@ async function getPaymentLink(items) {
     body: JSON.stringify(jsonData), // Convert JSON data to a string and set it as the request body
   };
 
-  pmtLink = fetch(process.env.SQUARE_DEV_LINK, options)
+  squareData = await fetch(process.env.SQUARE_DEV_LINK, options)
     .then((response) => {
       // Check if the request was successful
       if (!response.ok) {
@@ -116,31 +154,77 @@ async function getPaymentLink(items) {
     })
     .then((data) => {
       // Handle the JSON data
-      return data.payment_link.url;
+      console.log(data);
+      return data;
     })
     .catch((error) => {
       // Handle any errors that occurred during the fetch
       console.error("Fetch error:", error);
     });
 
-  return pmtLink;
+  const returnData = {
+    paymentLink: squareData.payment_link.url,
+    orderID: squareData.payment_link.order_id,
+  };
+
+  return returnData;
 }
 
-// async function addSponsor() {
-//   const { error } = await supabaseAdmin.from("Sponsors").insert([
-//     {
-//       name: "Joes Plumbing",
-//       contact_prefix: "Mr.",
-//       contact_first_name: "John",
-//       contact_last_name: "Smith",
-//       contact_phone_number: "631-888-9900",
-//       contact_email: "john@joesplumbing.com",
-//       address1: "123 Main St.",
-//       city: "Smithtown",
-//       state: "NY",
-//       zip: "11787",
-//     },
-//   ]);
-//   console.log("submitted request to add sponsor");
-//   console.log(error);
-// }
+async function addSponsor(sponsorInfo) {
+  const { data, error } = await supabaseAdmin
+    .from("Sponsors")
+    .insert([
+      {
+        company_name: sponsorInfo.companyName,
+        contact_prefix: sponsorInfo.prefix,
+        contact_first_name: sponsorInfo.firstName,
+        contact_last_name: sponsorInfo.lastName,
+        contact_phone_number: sponsorInfo.phoneNumber,
+        contact_email: sponsorInfo.email,
+        address1: sponsorInfo.address1,
+        address2: sponsorInfo.address2,
+        city: sponsorInfo.city,
+        state: sponsorInfo.state,
+        zip: sponsorInfo.zip,
+      },
+    ])
+    .select();
+  console.log("submitted request to add sponsor");
+
+  if (error) {
+    //email error to admin
+    console.log("ERROR", error);
+    return null;
+  } else {
+    return data[0].sponsor_id;
+  }
+}
+
+async function addDonations(donationArray) {
+  const { error } = await supabaseAdmin.from("Donations").insert(donationArray);
+
+  if (error) {
+    //email error to admin
+    console.log("ERROR", error);
+  }
+}
+
+export async function updateOrderPmtStatus(orderID) {
+  //update matching donations or attendees with the payment order ID and set the paid column to TRUE
+
+  const { donationError } = await supabaseAdmin
+    .from("Donations")
+    .update({ paid: true })
+    .eq(cc_order_id, orderID);
+
+  const { attendeeError } = await supabaseAdmin
+    .from("Attendees")
+    .update({ paid: true })
+    .eq(cc_order_id, orderID);
+}
+
+export async function getSponsors() {
+  const { data: sponsors } = await supabaseAdmin.from("Sponsors").select("*");
+
+  return sponsors;
+}

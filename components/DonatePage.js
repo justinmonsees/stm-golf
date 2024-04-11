@@ -6,7 +6,7 @@ import PageHeader from "@/components/PageHeader";
 import Header from "@/components/Header";
 import Image from "next/image";
 
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { faPlus, faMinus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -14,10 +14,16 @@ import {
   CardHeader,
   CardBody,
   CardFooter,
+  Select,
+  Option,
   Input,
   Button,
   Typography,
   IconButton,
+  Dialog,
+  DialogBody,
+  DialogFooter,
+  DialogHeader,
 } from "@material-tailwind/react";
 
 import { z } from "zod";
@@ -30,6 +36,7 @@ const phoneRegex = new RegExp(
 
 const schema = z.object({
   companyName: z.string(),
+  prefix: z.string(),
   firstName: z.string().min(1),
   lastName: z.string().min(1),
   phoneNumber: z.string().regex(phoneRegex, "Invalid Number!"),
@@ -53,6 +60,11 @@ const DonatePage = ({ items }) => {
     mode: "onBlur",
   });
 
+  const [isDialogOpen, setDialogOpen] = useState(false);
+  const handleDialogOpen = () => setDialogOpen((prevVal) => !prevVal);
+
+  const prefixes = ["Mr.", "Mrs.", "Ms."];
+
   const [curPanel, setCurPanel] = useState(0);
 
   const handleNext = () => setCurPanel(() => 1);
@@ -72,8 +84,6 @@ const DonatePage = ({ items }) => {
   const [sponsorships, setSponsorships] = useState(registerSponsorships);
 
   const increaseSponsorship = (sponsorshipID) => {
-    console.log(`Add 1 to ${sponsorshipID}`);
-
     setSponsorships((prevVal) => [
       ...prevVal.filter((item) => item.sponsorshipItemID !== sponsorshipID),
       {
@@ -239,7 +249,25 @@ const DonatePage = ({ items }) => {
                     </div>
                   </div>
 
-                  <div className="my-4 grid xs:grid-cols-1 md:grid-cols-2 items-center gap-4">
+                  <div className="my-4 grid xs:grid-cols-1 md:grid-cols-3 items-center gap-4">
+                    <Controller
+                      control={control}
+                      name={"prefix"}
+                      render={({ field }) => (
+                        <Select
+                          {...field}
+                          label="Prefix"
+                          color="stm-red"
+                          className="mb-3"
+                        >
+                          {prefixes.map((prefix, index) => (
+                            <Option key={`${index}`} value={prefix}>
+                              {prefix}
+                            </Option>
+                          ))}
+                        </Select>
+                      )}
+                    />
                     <div>
                       <Input
                         label={`First Name`}
@@ -329,7 +357,7 @@ const DonatePage = ({ items }) => {
                     color="stm-red"
                     variant="outlined"
                     size="lg"
-                    type="submit"
+                    onClick={handleDialogOpen}
                   >
                     Checkout
                   </Button>
@@ -337,6 +365,92 @@ const DonatePage = ({ items }) => {
               </Card>
             </div>
           </div>
+
+          {/*This is for the Dialog Box Segment*/}
+          <Dialog open={isDialogOpen} handler={handleDialogOpen}>
+            <DialogHeader className="justify-center border-b border-stm-red">
+              <Typography variant="h2" className="text-center text-stm-red">
+                Donation Confirmation
+              </Typography>
+            </DialogHeader>
+            <DialogBody className="text-black text-center text-2xl font-normal m-3 flex flex-col items-center">
+              <table className="text-left text-2xl border-separate border-spacing-4">
+                {sponsorships.map((sponsorship) => {
+                  return sponsorship.quantity > 0 ? (
+                    <tr>
+                      <td>
+                        {
+                          items.find(
+                            (item) =>
+                              item.item_id === sponsorship.sponsorshipItemID
+                          ).name
+                        }
+                      </td>
+                      <td>x{sponsorship.quantity}</td>
+                      <td>
+                        $
+                        {
+                          items.find(
+                            (item) =>
+                              item.item_id === sponsorship.sponsorshipItemID
+                          ).cost
+                        }
+                      </td>
+                      <td>
+                        $
+                        {sponsorship.quantity *
+                          items.find(
+                            (item) =>
+                              item.item_id === sponsorship.sponsorshipItemID
+                          ).cost}
+                      </td>
+                    </tr>
+                  ) : (
+                    ""
+                  );
+                })}
+                <tr>
+                  <td colSpan="3" className="text-right">
+                    Total
+                  </td>
+                  <td>
+                    $
+                    {sponsorships.reduce(
+                      (acc, sponsorship) =>
+                        acc +
+                        sponsorship.quantity *
+                          items.find(
+                            (item) =>
+                              item.item_id === sponsorship.sponsorshipItemID
+                          ).cost,
+                      0
+                    )}
+                  </td>
+                </tr>
+                <td colSpan="3"></td>
+                <td className="text-md">**Plus credit card fee</td>
+              </table>
+              <Typography variant="paragraph" className="text-left text-2xl">
+                You will now be redirected to our payment provider to complete
+                your registration.
+                <br />
+                <br />
+                Please click the confirm button to proceed.
+              </Typography>
+            </DialogBody>
+            <DialogFooter className="gap-4">
+              <Button variant="outlined" color="red" onClick={handleDialogOpen}>
+                Cancel
+              </Button>
+              <Button
+                variant="outlined"
+                color="green"
+                onClick={handleSubmit(addSponsor)}
+              >
+                Confirm
+              </Button>
+            </DialogFooter>
+          </Dialog>
           <div id="carousel-nav" className="flex w-full mt-4">
             <Button
               color="stm-red"
@@ -352,6 +466,7 @@ const DonatePage = ({ items }) => {
               variant="outlined"
               size="lg"
               onClick={handleNext}
+              disabled={sponsorships.every((item) => item.quantity === 0)}
               className={`${curPanel === 1 ? "hidden" : ""} ml-auto`}
             >
               Next

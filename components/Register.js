@@ -24,7 +24,6 @@ import AddAttendeeForm from "@/components/AddAttendeeForm";
 import EditAttendeeForm from "@/components/EditAttendeeForm";
 
 import { checkoutAttendees } from "@/utils/actions";
-import { IBM_Plex_Sans_Condensed } from "next/font/google";
 
 const Register = ({ items }) => {
   const [isAddFormOpen, setAddFormOpen] = useState(false);

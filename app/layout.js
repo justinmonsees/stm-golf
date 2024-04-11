@@ -103,6 +103,7 @@ export default function RootLayout({ children }) {
                     borderTopColor: "border-t-transparent",
                   },
                   withValue: {
+                    color: "text-black",
                     borderColor: "border-stm-red",
                     borderTopColor: "border-t-transparent",
                   },
@@ -111,7 +112,7 @@ export default function RootLayout({ children }) {
               label: {
                 "stm-red": {
                   close: {
-                    color: "text-stm-red",
+                    color: "text-blue-gray-500",
                     before: "before:border-transparent",
                     after: "after:border-transparent",
                   },

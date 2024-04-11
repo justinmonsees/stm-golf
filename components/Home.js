@@ -9,9 +9,12 @@ import golferImg from "@/assets/golfer_sandtrap.png";
 import { Button } from "@material-tailwind/react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { getSponsors } from "@/utils/actions";
 
 export default function Home({ initItems, initEventInfo }) {
   const [eventInfo, setEventInfo] = useState(initEventInfo);
+
+  console.log("Event Info:", eventInfo);
   const [itemInfo, setItemInfo] = useState(initItems);
 
   return (
@@ -19,7 +22,7 @@ export default function Home({ initItems, initEventInfo }) {
       <Header />
       <HeroSection initItemInfo={initItems} initEventInfo={initEventInfo} />
 
-      {/* <section className="grid gid-cols-1 sm:grid-cols-2">
+      <section className="grid gid-cols-1 sm:grid-cols-2">
         <div className="bg-white text-black m-auto grid p-4">
           <h2 className="uppercase text-5xl font-bold pb-5">Event Details</h2>
 
@@ -97,7 +100,7 @@ export default function Home({ initItems, initEventInfo }) {
           looking for new members to help with fundraising, planning, and
           facilitating on the day of the outing.
         </p>
-      </section> */}
+      </section>
 
       <Footer />
     </React.Fragment>
