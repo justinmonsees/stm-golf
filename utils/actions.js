@@ -211,6 +211,7 @@ async function addDonations(donationArray) {
 
 export async function updateOrderPmtStatus(orderID) {
   //update matching donations or attendees with the payment order ID and set the paid column to TRUE
+  console.log("UPDATING ORDER ID: ", orderID);
 
   const { donationError } = await supabaseAdmin
     .from("Donations")
@@ -221,6 +222,14 @@ export async function updateOrderPmtStatus(orderID) {
     .from("Attendees")
     .update({ paid: true })
     .eq(cc_order_id, orderID);
+
+  if (donationError) {
+    console.log("Error updating donations:", donationError);
+  }
+
+  if (attendeeError) {
+    console.log("Error updating attendees:", attendeeError);
+  }
 }
 
 // export async function getSponsors() {
