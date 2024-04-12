@@ -216,20 +216,20 @@ export async function updateOrderPmtStatus(orderID) {
   const { donationError } = await supabaseAdmin
     .from("Donations")
     .update({ paid: true })
-    .eq(cc_order_id, orderID);
+    .eq("cc_order_id", orderID)
+    .catch((err) => {
+      console.log("Error updating donations:", donationError);
+      return err;
+    });
 
   const { attendeeError } = await supabaseAdmin
     .from("Attendees")
     .update({ paid: true })
-    .eq(cc_order_id, orderID);
-
-  if (donationError) {
-    console.log("Error updating donations:", donationError);
-  }
-
-  if (attendeeError) {
-    console.log("Error updating attendees:", attendeeError);
-  }
+    .eq("cc_order_id", orderID)
+    .catch((err) => {
+      console.log("Error updating attendees:", attendeeError);
+      return err;
+    });
 }
 
 // export async function getSponsors() {
