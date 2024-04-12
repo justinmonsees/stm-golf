@@ -63,6 +63,7 @@ const DonatePage = ({ items }) => {
   const [isDialogOpen, setDialogOpen] = useState(false);
   const handleDialogOpen = () => setDialogOpen((prevVal) => !prevVal);
 
+  const [isLoadingPmtLink, setIsLoadingPmtLink] = useState(false);
   const prefixes = ["Mr.", "Mrs.", "Ms."];
 
   const [curPanel, setCurPanel] = useState(0);
@@ -109,12 +110,19 @@ const DonatePage = ({ items }) => {
 
   const addSponsor = (data) => {
     console.log("add sponsor");
-    //   const donationInfo = {
-    //     sponsor: data,
-    //     donations: sponsorships,
-    //   };
 
-    //   checkoutSponsors(donationInfo);
+    setIsLoadingPmtLink(true);
+
+    const donationInfo = {
+      sponsor: data,
+      donations: sponsorships,
+    };
+
+    checkoutSponsors(donationInfo);
+  };
+
+  const checkWorking = () => {
+    console.log("testing....");
   };
 
   return (
@@ -297,7 +305,9 @@ const DonatePage = ({ items }) => {
                         color="stm-red"
                         {...register(`phoneNumber`)}
                       />
-                      <div className="text-xs text-red-500"></div>
+                      <div className="text-xs text-red-500">
+                        {errors.phoneNumber && errors.phoneNumber.message}
+                      </div>
                     </div>
                     <div>
                       <Input
@@ -305,7 +315,9 @@ const DonatePage = ({ items }) => {
                         color="stm-red"
                         {...register(`email`)}
                       />
-                      <div className="text-xs text-red-500"></div>
+                      <div className="text-xs text-red-500">
+                        {errors.email && errors.email.message}
+                      </div>
                     </div>
                   </div>
 
@@ -315,7 +327,9 @@ const DonatePage = ({ items }) => {
                       color="stm-red"
                       {...register(`address1`)}
                     />
-                    <div className="text-xs text-red-500"></div>
+                    <div className="text-xs text-red-500">
+                      {errors.address1 && errors.address1.message}
+                    </div>
                   </div>
 
                   <div className="my-4">
@@ -324,7 +338,9 @@ const DonatePage = ({ items }) => {
                       color="stm-red"
                       {...register(`address2`)}
                     />
-                    <div className="text-xs text-red-500"></div>
+                    <div className="text-xs text-red-500">
+                      {errors.address2 && errors.address2.message}
+                    </div>
                   </div>
 
                   <div className="my-4 grid xs:grid-cols-1 md:grid-cols-3 items-center gap-4">
@@ -334,7 +350,9 @@ const DonatePage = ({ items }) => {
                         color="stm-red"
                         {...register(`city`)}
                       />
-                      <div className="text-xs text-red-500"></div>
+                      <div className="text-xs text-red-500">
+                        {errors.city && errors.city.message}
+                      </div>
                     </div>
                     <div>
                       <Input
@@ -342,7 +360,9 @@ const DonatePage = ({ items }) => {
                         color="stm-red"
                         {...register(`state`)}
                       />
-                      <div className="text-xs text-red-500"></div>
+                      <div className="text-xs text-red-500">
+                        {errors.state && errors.state.message}
+                      </div>
                     </div>
                     <div>
                       <Input
@@ -350,7 +370,9 @@ const DonatePage = ({ items }) => {
                         color="stm-red"
                         {...register(`zip`)}
                       />
-                      <div className="text-xs text-red-500"></div>
+                      <div className="text-xs text-red-500">
+                        {errors.zip && errors.zip.message}
+                      </div>
                     </div>
                   </div>
                   <Button
@@ -450,6 +472,7 @@ const DonatePage = ({ items }) => {
                 variant="outlined"
                 color="green"
                 onClick={handleSubmit(addSponsor)}
+                loading={isLoadingPmtLink}
               >
                 Confirm
               </Button>
