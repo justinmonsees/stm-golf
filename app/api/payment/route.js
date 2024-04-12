@@ -11,7 +11,7 @@ export async function POST(req) {
   if (isFromSquare(signature, rawBody)) {
     //process incoming webhook request
     console.log("BODY", body);
-    console.log("ORDER ID BEING SENT TO ACTIONS:", body.data.order_id);
+    console.log("ORDER ID BEING SENT TO ACTIONS:", body.data.payment.order_id);
     updateOrderPmtStatus(body.data.object.order_id);
     return NextResponse.json(
       { Message: "Webhook Payload Processed" },
