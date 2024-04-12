@@ -214,7 +214,7 @@ export async function updateOrderPmtStatus(orderID) {
   console.log("UPDATING ORDER ID: ", orderID);
 
   try {
-    await supabaseAdmin
+    const { donateData, donateError } = await supabaseAdmin
       .from("Donations")
       .update({ paid: "TRUE" })
       .eq("cc_order_id", orderID);
@@ -223,13 +223,18 @@ export async function updateOrderPmtStatus(orderID) {
   }
 
   try {
-    await supabaseAdmin
+    const { attendeeData, attendeeError } = await supabaseAdmin
       .from("Attendees")
       .update({ paid: "TRUE" })
       .eq("cc_order_id", orderID);
   } catch (err) {
     console.log("Error updating attendees:", attendeeError);
   }
+
+  console.log("Donation Update Response", donateData);
+  console.log("Donation Update Error", donateError);
+  console.log("Attendee Update Response", attendeeData);
+  console.log("Attendee Update Error", attendeeError);
 }
 
 // export async function getSponsors() {
