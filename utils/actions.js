@@ -216,7 +216,7 @@ export async function updateOrderPmtStatus(orderID) {
   try {
     await supabaseAdmin
       .from("Donations")
-      .update({ paid: true })
+      .update({ paid: "TRUE" })
       .eq("cc_order_id", orderID);
   } catch (err) {
     console.log("Error updating donations:", donationError);
@@ -225,7 +225,7 @@ export async function updateOrderPmtStatus(orderID) {
   try {
     await supabaseAdmin
       .from("Attendees")
-      .update({ paid: true })
+      .update({ paid: "TRUE" })
       .eq("cc_order_id", orderID);
   } catch (err) {
     console.log("Error updating attendees:", attendeeError);
