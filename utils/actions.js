@@ -213,23 +213,23 @@ export async function updateOrderPmtStatus(orderID) {
   //update matching donations or attendees with the payment order ID and set the paid column to TRUE
   console.log("UPDATING ORDER ID: ", orderID);
 
-  const { donationError } = await supabaseAdmin
-    .from("Donations")
-    .update({ paid: true })
-    .eq("cc_order_id", orderID)
-    .catch((err) => {
-      console.log("Error updating donations:", donationError);
-      return err;
-    });
+  try {
+    await supabaseAdmin
+      .from("Donations")
+      .update({ paid: true })
+      .eq("cc_order_id", orderID);
+  } catch (err) {
+    console.log("Error updating donations:", donationError);
+  }
 
-  const { attendeeError } = await supabaseAdmin
-    .from("Attendees")
-    .update({ paid: true })
-    .eq("cc_order_id", orderID)
-    .catch((err) => {
-      console.log("Error updating attendees:", attendeeError);
-      return err;
-    });
+  try {
+    await supabaseAdmin
+      .from("Attendees")
+      .update({ paid: true })
+      .eq("cc_order_id", orderID);
+  } catch (err) {
+    console.log("Error updating attendees:", attendeeError);
+  }
 }
 
 // export async function getSponsors() {
