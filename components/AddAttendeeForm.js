@@ -136,7 +136,7 @@ const AddAttendeeForm = ({ isFormOpen, formHandler, setAttendees, items }) => {
             onClick={handleCloseForm}
           />
         </DialogHeader>
-        <DialogBody className="overflow-scroll">
+        <DialogBody>
           <AnimatePresence initial={false}>
             {isFormVisible && (
               <motion.div

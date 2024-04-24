@@ -4,6 +4,7 @@ import React from "react";
 import { useState } from "react";
 import PageHeader from "@/components/PageHeader";
 import Header from "@/components/Header";
+import { sendEmail } from "@/utils/emails";
 import {
   Card,
   Typography,
@@ -22,8 +23,7 @@ import { faXmark, faPencil } from "@fortawesome/free-solid-svg-icons";
 
 import AddAttendeeForm from "@/components/AddAttendeeForm";
 import EditAttendeeForm from "@/components/EditAttendeeForm";
-
-import { checkoutAttendees } from "@/utils/actions";
+import PaymentModal from "./PaymentModal";
 
 const Register = ({ items }) => {
   const [isAddFormOpen, setAddFormOpen] = useState(false);
@@ -62,6 +62,7 @@ const Register = ({ items }) => {
       return prevVal.filter((attendee) => attendee.ID !== attendeeID);
     });
   };
+  console.log(attendees);
 
   return (
     <React.Fragment>
@@ -221,27 +222,11 @@ const Register = ({ items }) => {
         </div>
 
         {/*This is for the Dialog Box Segment*/}
-        <Dialog open={isDialogOpen} handler={handleDialogOpen}>
-          <DialogBody className="text-black text-center text-2xl font-normal m-3">
-            You will now be redirected to our payment provider to complete your
-            registration.
-            <br />
-            <br />
-            Please click the confirm button to proceed.
-          </DialogBody>
-          <DialogFooter className="gap-4">
-            <Button variant="outlined" color="red" onClick={handleDialogOpen}>
-              Cancel
-            </Button>
-            <Button
-              variant="outlined"
-              color="green"
-              onClick={() => checkoutAttendees(attendees)}
-            >
-              Confirm
-            </Button>
-          </DialogFooter>
-        </Dialog>
+        <PaymentModal
+          isDialogOpen={isDialogOpen}
+          handleDialogOpen={handleDialogOpen}
+          attendees={attendees}
+        />
 
         <Button
           variant="outlined"

@@ -3,6 +3,7 @@
 import { supabase, supabaseAdmin } from "@/utils/supabaseClient";
 import { unstable_cache } from "next/cache";
 import { redirect } from "next/navigation";
+import { sendEmail } from "./emails";
 
 async function getInitialData() {
   const { data: eventData } = await supabase
@@ -55,7 +56,10 @@ export async function checkoutSponsors(donationInfo) {
       ).name,
     }));
 
-  const { paymentLink, orderID } = await getPaymentLink(items);
+  const { paymentLink, orderID } = await getPaymentLink(
+    items,
+    "https://www.stmgolf.org/thank-you-sponsor"
+  );
 
   const sponsor = await getSponsor(donationInfo.sponsor.companyName);
   let sponsorID = "";
@@ -89,7 +93,49 @@ export async function checkoutSponsors(donationInfo) {
   redirect(paymentLink);
 }
 
-export async function checkoutAttendees(attendees) {
+export async function checkoutAttendees(attendees, pmtType, email = "") {
+  const { paymentLink, orderID } = await getAttendeesPmtLink(attendees);
+
+  addAttendees(attendees, orderID);
+
+  if (pmtType === "card") {
+    redirect(paymentLink);
+  } else {
+    sendEmail(email, attendees, paymentLink);
+    redirect("/thank-you-check");
+  }
+}
+
+async function addAttendees(attendees, ccOrderID) {
+  console.log("ADDING ATTENDEES");
+  const appData = await getCachedAppData();
+
+  const eventInfo = appData.eventData;
+
+  const attendeeArray = attendees.map((attendee) => ({
+    first_name: attendee.FirstName,
+    last_name: attendee.LastName,
+    phone_number: attendee.PhoneNumber,
+    email: attendee.Email,
+    amount_paid: attendee.Cost,
+    event_id: eventInfo.event_id,
+    paid: false,
+    cc_order_id: ccOrderID,
+  }));
+
+  const { data, error } = await supabaseAdmin
+    .from("Attendees")
+    .insert(attendeeArray);
+
+  if (error) {
+    //email error to admin
+    console.log("ERROR", error);
+  } else {
+    console.log("ATTENDEE RESULT", data);
+  }
+}
+
+export async function getAttendeesPmtLink(attendees) {
   const items = attendees.map((attendee) => ({
     quantity: "1",
     base_price_money: {
@@ -99,12 +145,15 @@ export async function checkoutAttendees(attendees) {
     item_type: "ITEM",
     name: `${attendee.FirstName} ${attendee.LastName} - ${attendee.EventType}`,
   }));
-  const pmtLink = await getPaymentLink(items);
+  const { paymentLink, orderID } = await getPaymentLink(
+    items,
+    "https://www.stmgolf.org/thank-you-cc"
+  );
 
-  redirect(pmtLink);
+  return { paymentLink, orderID };
 }
 
-async function getPaymentLink(items, ccOrderID) {
+async function getPaymentLink(items, redirectLink) {
   const squarePmtLink = process.env.SQUARE_PMT_LINK;
   const squareLocationID = process.env.SQUARE_LOCATION_ID;
   const squareAccessToken = process.env.SQUARE_DEV_ACCESS_TOKEN;
@@ -130,6 +179,7 @@ async function getPaymentLink(items, ccOrderID) {
       askForShippingAddress: false,
       enableCoupon: false,
       enableLoyalty: false,
+      redirect_url: redirectLink,
     },
   };
 
@@ -211,7 +261,7 @@ async function addDonations(donationArray) {
 
 export async function updateOrderPmtStatus(orderID) {
   //update matching donations or attendees with the payment order ID and set the paid column to TRUE
-  console.log("UPDATING ORDER ID: ", orderID);
+  //console.log("UPDATING ORDER ID: ", orderID);
 
   try {
     const { donateData, donateError } = await supabaseAdmin
@@ -230,15 +280,4 @@ export async function updateOrderPmtStatus(orderID) {
   } catch (err) {
     console.log("Error updating attendees:", attendeeError);
   }
-
-  console.log("Donation Update Response", donateData);
-  console.log("Donation Update Error", donateError);
-  console.log("Attendee Update Response", attendeeData);
-  console.log("Attendee Update Error", attendeeError);
 }
-
-// export async function getSponsors() {
-//   const { data: sponsors } = await supabaseAdmin.from("Sponsors").select("*");
-
-//   return sponsors;
-// }

@@ -54,14 +54,14 @@ const HeroSection = ({ initItemInfo, initEventInfo }) => {
               color="white"
               className="text-white border-white"
             >
-              <Link href={"register"}>Register Now</Link>
+              <Link href="/register">Register Now</Link>
             </Button>
             <Button
               variant="outlined"
               color="white"
               className="text-white border-white"
             >
-              <Link href={"donate"}>Become a Sponsor</Link>
+              <Link href="/donate">Become a Sponsor</Link>
             </Button>
           </div>
         </div>

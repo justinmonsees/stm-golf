@@ -9,7 +9,7 @@ import golferImg from "@/assets/golfer_sandtrap.png";
 import { Button } from "@material-tailwind/react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { getSponsors } from "@/utils/actions";
+import Link from "next/link";
 
 export default function Home({ initItems, initEventInfo }) {
   const [eventInfo, setEventInfo] = useState(initEventInfo);
@@ -46,7 +46,7 @@ export default function Home({ initItems, initEventInfo }) {
             color="black"
             className="justify-self-center"
           >
-            Register Now
+            <Link href="/register">Register Now</Link>
           </Button>
         </div>
 
@@ -79,14 +79,15 @@ export default function Home({ initItems, initEventInfo }) {
             color="black"
             className="justify-self-center"
           >
-            Past Sponsors
+            {" "}
+            <Link href="/sponsors">Past Sponsors</Link>
           </Button>
           <Button
             variant="outlined"
             color="black"
             className="justify-self-center"
           >
-            Become a Sponsor
+            <Link href="/donate">Become A Sponsor</Link>
           </Button>
         </div>
       </section>
