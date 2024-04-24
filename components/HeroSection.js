@@ -69,14 +69,7 @@ const HeroSection = ({ initItemInfo, initEventInfo }) => {
         <div className="grid lg:grid-cols-4 sm:grid-cols-2 w-full mt-auto gap-y-3 gap-x-3 p-3">
           <InfoCard
             infoIcon={faCalendarDays}
-            infoText={new Date(eventInfo.event_date).toLocaleDateString(
-              "en-us",
-              {
-                month: "long",
-                day: "numeric",
-                year: "numeric",
-              }
-            )}
+            infoText={eventInfo.event_date}
           ></InfoCard>
 
           <InfoCard
